@@ -2,6 +2,7 @@ package org.simpleframework.test;
 
 import org.simpleframework.core.BeanContainer;
 import org.simpleframework.mvc.DispatcherServlet;
+import org.simpleframework.mvc.MyDispatcherServlet;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -12,14 +13,14 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class DispatcherServletTest {
 
-    private static final DispatcherServlet dispatcherServlet;
+    private static final MyDispatcherServlet dispatcherServlet;
     private static final BeanContainer beanContainer;
 
     static {
         beanContainer = BeanContainer.getInstance();
 
 
-        dispatcherServlet = new DispatcherServlet();
+        dispatcherServlet = new MyDispatcherServlet();
         dispatcherServlet.init();
 
         loadBeansTest();
@@ -38,8 +39,7 @@ public class DispatcherServletTest {
     }
 
     public static void main(String[] args) {
-//        ServletRequest req = new HttpServletRequestWrapper();
-//        ServletResponse res;
+        // TODO: 请求分配
 //        dispatcherServlet.service();
     }
 

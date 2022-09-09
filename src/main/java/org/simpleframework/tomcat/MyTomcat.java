@@ -1,13 +1,18 @@
 package org.simpleframework.tomcat;
 
+import org.simpleframework.mvc.MyDispatcherServlet;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.Executors;
 
 /**
  * @author fa
@@ -26,34 +31,52 @@ public class MyTomcat {
         // 初始化URL与对应处理的servlet的关系
         initServletMapping();
 
-        ServerSocket serverSocket = null;
-        try {
-            serverSocket = new ServerSocket(port);
-            System.out.println("MyTomcat is start...");
-            while (true) {
-                Socket socket = serverSocket.accept();
-                InputStream inputStream = socket.getInputStream();
-                OutputStream outputStream = socket.getOutputStream();
+        Executors.newSingleThreadExecutor().execute(() -> {
 
-                MyRequest myRequest = new MyRequest(inputStream);
-                MyResponse myResponse = new MyResponse(outputStream);
+            try (ServerSocket serverSocket = new ServerSocket(port);) {
+                System.out.println("MyTomcat is start...");
+                while (true) {
+                    OutputStream outputStream = null;
+                    try {
+                        Socket socket = serverSocket.accept();
 
-                // 请求分发
-                dispatch(myRequest, myResponse);
+                        InputStream inputStream = socket.getInputStream();
+                        outputStream = socket.getOutputStream();
 
-                socket.close();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            if (serverSocket != null) {
-                try {
-                    serverSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
+                        MyRequest myRequest = new MyRequest(inputStream);
+                        MyResponse myResponse = new MyResponse(outputStream);
+
+                        System.out.println("accept: myRequest: " + myRequest + ", myResponse: " + myResponse);
+
+                        // 请求分发
+                        dispatch(myRequest, myResponse);
+
+                        socket.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+
+                        if (Objects.nonNull(outputStream)) {
+                            String respStr = "HTTP/1.1 200 OK\n" +
+                                    "Content-Type: text/html" +
+                                    "\n\n" +
+                                    "<html><body>" +
+                                    "exception: " + e.getMessage() +
+                                    "</body></html>";
+
+                            outputStream.write(respStr.getBytes(StandardCharsets.UTF_8));
+                            outputStream.close();
+
+                        }
+
+                    }
                 }
+
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }
+
+        });
+
     }
 
     private void initServletMapping() {
@@ -85,10 +108,10 @@ public class MyTomcat {
     public static void main(String[] args) {
         int port = 8080;
 
+        new MyTomcat(port).start();
+
         // 示例: localhost:8080/girl
         System.out.println("启动后，浏览器访问: localhost:" + port);
-
-        new MyTomcat(port).start();
 
     }
 
