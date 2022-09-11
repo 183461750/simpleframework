@@ -1,7 +1,6 @@
-package org.simpleframework.mvc.render;
+package org.simpleframework.mvc.myrender;
 
 import org.simpleframework.mvc.MyRequestProcessorChain;
-import org.simpleframework.mvc.RequestProcessorChain;
 
 /**
  * 渲染请求结果

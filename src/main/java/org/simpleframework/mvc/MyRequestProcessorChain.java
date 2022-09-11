@@ -2,18 +2,13 @@ package org.simpleframework.mvc;
 
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.simpleframework.mvc.myrender.MyResultRender;
+import org.simpleframework.mvc.myrender.impl.MyDefaultResultRender;
+import org.simpleframework.mvc.myrender.impl.MyInternalErrorResultRender;
 import org.simpleframework.mvc.processor.MyRequestProcessor;
-import org.simpleframework.mvc.processor.RequestProcessor;
-import org.simpleframework.mvc.render.MyResultRender;
-import org.simpleframework.mvc.render.ResultRender;
-import org.simpleframework.mvc.render.impl.DefaultResultRender;
-import org.simpleframework.mvc.render.impl.InternalErrorResultRender;
-import org.simpleframework.mvc.render.impl.MyDefaultResultRender;
-import org.simpleframework.mvc.render.impl.MyInternalErrorResultRender;
 import org.simpleframework.tomcat.MyRequest;
 import org.simpleframework.tomcat.MyResponse;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Iterator;
 
@@ -42,13 +37,14 @@ public class MyRequestProcessorChain {
     private MyResultRender resultRender;
 
     public MyRequestProcessorChain(Iterator<MyRequestProcessor> iterator, MyRequest req, MyResponse resp) {
-        this.requestProcessorIterator=iterator;
-        this.request=req;
-        this.response=resp;
-        this.requestMethod=req.getMethod();
-        this.requestPath=req.getUrl();
-        this.responseCode=HttpServletResponse.SC_OK;
+        this.requestProcessorIterator = iterator;
+        this.request = req;
+        this.response = resp;
+        this.requestMethod = req.getMethod();
+        this.requestPath = req.getUrl();
+        this.responseCode = HttpServletResponse.SC_OK;
     }
+
     /**
      * @Description:以责任链模式执行请求链
      * @return: void
@@ -62,13 +58,12 @@ public class MyRequestProcessorChain {
                     break;
                 }
             }
-        }catch (Exception e) {
-                //3、期间如果出现异常，则交由内部异常渲染器处理
-                resultRender=new MyInternalErrorResultRender(e.getMessage());
-                log.error("doRequestProcessorChain error:"+ e);
-            }
+        } catch (Exception e) {
+            //3、期间如果出现异常，则交由内部异常渲染器处理
+            resultRender = new MyInternalErrorResultRender(e.getMessage());
+            log.error("doRequestProcessorChain error:" + e);
         }
-
+    }
 
 
     /**
@@ -77,15 +72,15 @@ public class MyRequestProcessorChain {
      */
     public void doRender() {
         //1、如果请求处理器实现类均未选择合适的渲染器，则使用默认的
-        if(this.resultRender==null){
-            this.resultRender=new MyDefaultResultRender();
+        if (this.resultRender == null) {
+            this.resultRender = new MyDefaultResultRender();
         }
         //2、调用渲染器的Render方法对结果进行渲染
         try {
             this.resultRender.render(this);
         } catch (Exception e) {
-            log.error("doRequestProcessorChain error:"+e);
-            throw new RuntimeException() ;
+            log.error("doRequestProcessorChain error:" + e);
+            throw new RuntimeException();
         }
     }
 }

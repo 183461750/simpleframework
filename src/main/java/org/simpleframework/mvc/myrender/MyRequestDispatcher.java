@@ -1,4 +1,4 @@
-package org.simpleframework.mvc.render;
+package org.simpleframework.mvc.myrender;
 
 import org.simpleframework.tomcat.MyRequest;
 import org.simpleframework.tomcat.MyResponse;

@@ -1,10 +1,8 @@
-package org.simpleframework.mvc.render.impl;
+package org.simpleframework.mvc.myrender.impl;
 
 import com.google.gson.Gson;
 import org.simpleframework.mvc.MyRequestProcessorChain;
-import org.simpleframework.mvc.RequestProcessorChain;
-import org.simpleframework.mvc.render.MyResultRender;
-import org.simpleframework.mvc.render.ResultRender;
+import org.simpleframework.mvc.myrender.MyResultRender;
 
 import java.io.PrintWriter;
 

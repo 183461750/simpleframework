@@ -1,9 +1,7 @@
-package org.simpleframework.mvc.render.impl;
+package org.simpleframework.mvc.myrender.impl;
 
 import org.simpleframework.mvc.MyRequestProcessorChain;
-import org.simpleframework.mvc.RequestProcessorChain;
-import org.simpleframework.mvc.render.MyResultRender;
-import org.simpleframework.mvc.render.ResultRender;
+import org.simpleframework.mvc.myrender.MyResultRender;
 
 /**
  * @program: simpleframework

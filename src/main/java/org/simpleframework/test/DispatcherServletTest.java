@@ -1,16 +1,14 @@
 package org.simpleframework.test;
 
 import org.simpleframework.core.BeanContainer;
-import org.simpleframework.mvc.DispatcherServlet;
+import org.simpleframework.core.annotation.Component;
 import org.simpleframework.mvc.MyDispatcherServlet;
-
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequestWrapper;
+import org.simpleframework.tomcat.MyTomcat;
 
 /**
  * @author fa
  */
+@Component
 public class DispatcherServletTest {
 
     private static final MyDispatcherServlet dispatcherServlet;
@@ -19,11 +17,12 @@ public class DispatcherServletTest {
     static {
         beanContainer = BeanContainer.getInstance();
 
+        // 初始化bean容器
+        loadBeansTest();
 
         dispatcherServlet = new MyDispatcherServlet();
         dispatcherServlet.init();
 
-        loadBeansTest();
     }
 
     public static void loadBeansTest() {
@@ -39,7 +38,12 @@ public class DispatcherServletTest {
     }
 
     public static void main(String[] args) {
-        // TODO: 请求分配
+
+        MyTomcat myTomcat = new MyTomcat(8080);
+        myTomcat.setMyDispatcherServlet(dispatcherServlet);
+
+        myTomcat.start();
+
 //        dispatcherServlet.service();
     }
 

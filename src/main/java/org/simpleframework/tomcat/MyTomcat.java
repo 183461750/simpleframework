@@ -1,5 +1,6 @@
 package org.simpleframework.tomcat;
 
+import lombok.Data;
 import org.simpleframework.mvc.MyDispatcherServlet;
 
 import java.io.IOException;
@@ -12,16 +13,21 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 
 /**
  * @author fa
  */
+@Data
 public class MyTomcat {
+
+    private MyDispatcherServlet myDispatcherServlet;
 
     private int port = 8080;
 
     private Map<String, String> urlServletMap = new HashMap<>();
+
 
     public MyTomcat(int port) {
         this.port = port;
@@ -37,6 +43,7 @@ public class MyTomcat {
                 System.out.println("MyTomcat is start...");
                 while (true) {
                     OutputStream outputStream = null;
+                    MyResponse myResponse = null;
                     try {
                         Socket socket = serverSocket.accept();
 
@@ -44,7 +51,7 @@ public class MyTomcat {
                         outputStream = socket.getOutputStream();
 
                         MyRequest myRequest = new MyRequest(inputStream);
-                        MyResponse myResponse = new MyResponse(outputStream);
+                        myResponse = new MyResponse(outputStream);
 
                         System.out.println("accept: myRequest: " + myRequest + ", myResponse: " + myResponse);
 
@@ -56,14 +63,17 @@ public class MyTomcat {
                         e.printStackTrace();
 
                         if (Objects.nonNull(outputStream)) {
+
+                            String characterEncoding = Optional.ofNullable(myResponse).map(MyResponse::getCharacterEncoding).orElse("UTF-8");
+
                             String respStr = "HTTP/1.1 200 OK\n" +
-                                    "Content-Type: text/html" +
+                                    "Content-Type: text/html;charset=" + characterEncoding +
                                     "\n\n" +
                                     "<html><body>" +
                                     "exception: " + e.getMessage() +
                                     "</body></html>";
 
-                            outputStream.write(respStr.getBytes(StandardCharsets.UTF_8));
+                            outputStream.write(respStr.getBytes(characterEncoding));
                             outputStream.close();
 
                         }
@@ -93,16 +103,10 @@ public class MyTomcat {
             return;
         }
 
-        try {
-            System.out.println("url: " + url + ", clazz: " + clazz);
-            Class<MyServlet> myServletClass = (Class<MyServlet>) Class.forName(clazz);
-            MyServlet myServlet = myServletClass.getDeclaredConstructor().newInstance();
+        System.out.println("url: " + url + ", clazz: " + clazz);
 
-            myServlet.service(myRequest, myResponse);
+        myDispatcherServlet.service(myRequest, myResponse);
 
-        } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
     }
 
     public static void main(String[] args) {

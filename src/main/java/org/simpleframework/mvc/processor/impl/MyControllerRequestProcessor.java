@@ -3,22 +3,20 @@ package org.simpleframework.mvc.processor.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.simpleframework.core.BeanContainer;
 import org.simpleframework.mvc.MyRequestProcessorChain;
-import org.simpleframework.mvc.RequestProcessorChain;
 import org.simpleframework.mvc.annotation.RequestMapping;
 import org.simpleframework.mvc.annotation.RequestParam;
 import org.simpleframework.mvc.annotation.ResponseBody;
+import org.simpleframework.mvc.myrender.MyResultRender;
+import org.simpleframework.mvc.myrender.impl.MyJsonResultRender;
+import org.simpleframework.mvc.myrender.impl.MyResourceNotFoundResultRender;
+import org.simpleframework.mvc.myrender.impl.MyViewResultRender;
 import org.simpleframework.mvc.processor.MyRequestProcessor;
-import org.simpleframework.mvc.processor.RequestProcessor;
-import org.simpleframework.mvc.render.MyResultRender;
-import org.simpleframework.mvc.render.ResultRender;
-import org.simpleframework.mvc.render.impl.*;
 import org.simpleframework.mvc.type.ControllerMethod;
 import org.simpleframework.mvc.type.RequestPathInfo;
 import org.simpleframework.tomcat.MyRequest;
 import org.simpleframework.util.ConverterUtil;
 import org.simpleframework.util.ValidationUtil;
 
-import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
@@ -140,8 +138,7 @@ public class MyControllerRequestProcessor implements MyRequestProcessor {
         Map<String, String> requestParamMap = new HashMap<>();
         //GET，POST方法的请求参数获取方式
         Map<String, String[]> parameterMap = request.getParameterMap();
-        for (Map.Entry<String, String[]> parameter : parameterMap.entrySet()
-        ) {
+        for (Map.Entry<String, String[]> parameter : parameterMap.entrySet()) {
             if (!ValidationUtil.isEmpty(parameter.getValue())) {
                 //只支持一个参数对应一个值的形式
                 requestParamMap.put(parameter.getKey(), parameter.getValue()[0]);

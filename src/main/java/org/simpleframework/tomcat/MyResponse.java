@@ -28,7 +28,7 @@ public class MyResponse {
     public void write(String content) throws IOException {
         StringBuffer httpResponse = new StringBuffer();
         httpResponse.append("HTTP/1.1 200 OK\n")
-                .append("Content-Type: text/html")
+                .append("Content-Type: text/html;charset=").append(characterEncoding)
                 .append("\r\n\n")
                 .append("<html><body>")
                 .append(content)
@@ -42,7 +42,7 @@ public class MyResponse {
         System.out.println(respStr);
         System.out.println("====================respStr====================");
 
-        outputStream.write(respStr.getBytes());
+        outputStream.write(respStr.getBytes(characterEncoding));
         outputStream.close();
 
     }
@@ -50,7 +50,7 @@ public class MyResponse {
     public void write(int code) throws IOException {
         StringBuffer httpResponse = new StringBuffer();
         httpResponse.append("HTTP/1.1 ").append(code).append(" OK\n")
-                .append("Content-Type: text/html")
+                .append("Content-Type: text/html;charset=").append(characterEncoding)
                 .append("\r\n\n")
                 .append("<html><body>")
                 .append("nobody")
@@ -64,7 +64,7 @@ public class MyResponse {
         System.out.println(respStr);
         System.out.println("====================respStr====================");
 
-        outputStream.write(respStr.getBytes());
+        outputStream.write(respStr.getBytes(characterEncoding));
         outputStream.close();
 
     }
@@ -72,7 +72,7 @@ public class MyResponse {
     public void write(int code, String content) throws IOException {
         StringBuffer httpResponse = new StringBuffer();
         httpResponse.append("HTTP/1.1 ").append(code).append(" OK\n")
-                .append("Content-Type: text/html")
+                .append("Content-Type: text/html;charset=").append(characterEncoding)
                 .append("\r\n\n")
                 .append("<html><body>").append(content).append("</body></html>");
 
@@ -84,7 +84,7 @@ public class MyResponse {
         System.out.println(respStr);
         System.out.println("====================respStr====================");
 
-        outputStream.write(respStr.getBytes());
+        outputStream.write(respStr.getBytes(characterEncoding));
         outputStream.close();
 
     }

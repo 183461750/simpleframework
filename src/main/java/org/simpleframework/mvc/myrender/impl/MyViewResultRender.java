@@ -1,7 +1,7 @@
-package org.simpleframework.mvc.render.impl;
+package org.simpleframework.mvc.myrender.impl;
 
 import org.simpleframework.mvc.MyRequestProcessorChain;
-import org.simpleframework.mvc.render.MyResultRender;
+import org.simpleframework.mvc.myrender.MyResultRender;
 import org.simpleframework.mvc.type.ModelAndView;
 import org.simpleframework.tomcat.MyRequest;
 import org.simpleframework.tomcat.MyResponse;
@@ -46,12 +46,12 @@ public class MyViewResultRender implements MyResultRender {
     public void render(MyRequestProcessorChain requestProcessorChain) throws Exception {
         MyResponse response = requestProcessorChain.getResponse();
         MyRequest request = requestProcessorChain.getRequest();
-        String path = modelAndView.getView();
+        String view = modelAndView.getView();
         Map<String, Object> model = modelAndView.getModel();
         for (Map.Entry<String, Object> entry : model.entrySet()) {
             request.setAttribute(entry.getKey(), entry.getValue());
         }
-        request.getRequestDispatcher(VIEW_PATH + path).forward(request, response);
-
+//        request.getRequestDispatcher(VIEW_PATH + path).forward(request, response);
+        response.write(view);
     }
 }
