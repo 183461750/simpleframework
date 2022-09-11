@@ -14,6 +14,8 @@ import java.io.PrintWriter;
  **/
 public class MyJsonResultRender implements MyResultRender {
     private Object jsonData;
+    private Gson gson=new Gson();
+
     public MyJsonResultRender(Object result) {
         this.jsonData=result;
     }
@@ -24,11 +26,8 @@ public class MyJsonResultRender implements MyResultRender {
         requestProcessorChain.getResponse().setContentType("application/json");
         //设置响应编码
         requestProcessorChain.getResponse().setCharacterEncoding("UTF-8");
-        //响应流写入经过gson格式化之后的处理结果
-        try(PrintWriter writer=requestProcessorChain.getResponse().getWriter()){
-            Gson gson=new Gson();
-            writer.write(gson.toJson(jsonData));
-            writer.flush();
-        }
+
+        requestProcessorChain.getResponse().writeJson(gson.toJson(jsonData));
+
     }
 }

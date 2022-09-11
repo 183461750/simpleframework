@@ -5,6 +5,7 @@ import lombok.Data;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -33,6 +34,26 @@ public class MyResponse {
                 .append("<html><body>")
                 .append(content)
                 .append("</body></html>");
+
+        String respStr = httpResponse.toString();
+
+//        respStr = "HTTP/1.1 200 OK\napplication/json;charset=UTF-8\n\n{}";
+
+        System.out.println("====================respStr====================");
+        System.out.println(respStr);
+        System.out.println("====================respStr====================");
+
+        outputStream.write(respStr.getBytes(characterEncoding));
+        outputStream.close();
+
+    }
+
+    public void writeJson(String content) throws IOException {
+        StringBuffer httpResponse = new StringBuffer();
+        httpResponse.append("HTTP/1.1 200 OK\n")
+                .append("Content-Type: ").append(contentType).append(";charset=").append(characterEncoding)
+                .append("\r\n\n")
+                .append(content);
 
         String respStr = httpResponse.toString();
 
